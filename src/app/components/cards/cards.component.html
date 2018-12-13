@@ -1,0 +1,257 @@
+<!-- Card Modal -->
+<ng-template #cardmodal let-cardModal>
+  <div class="portfolio-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="close-modal" (click)="cardModal.dismiss('Cross click')">
+          <div class="lr">
+            <div class="rl"></div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-7 mx-auto">
+              <div class="modal-body">
+                <h3 class="text-uppercase">Petition</h3>
+                <p class="item-intro text-muted">{{posts[idxModal].title}}
+                <p>{{posts[idxModal].content}}</p>
+                <ul class="list-inline">
+                  <li><em>Period&nbsp; {{getWeekAgo(posts[idxModal].expired) | date: 'yyyy.MM.dd'}}
+                    ~ {{posts[idxModal].expired | date: 'yyyy.MM.dd'}}</em></li>
+                </ul>
+                <ng-container *ngIf="posts[idxModal].feedback && showFeedback">
+                  <button class="btn btn-primary" type="button" (click)="showFeedback = false">
+                    <fa-icon [icon]="['fas', 'times']"></fa-icon>
+                    Feedback Close
+                  </button>
+                </ng-container>
+                <ng-container *ngIf="posts[idxModal].feedback && !showFeedback">
+                  <button class="btn btn-danger" type="button" (click)="showFeedback = true">Feedback</button>
+                </ng-container>
+                <br/>
+                <div class="row justify-content-center">
+                <span style="color: red" (click)="update(idxModal, 'like')"><fa-icon
+                  [icon]="['fas', 'heart']"></fa-icon>
+              <span class="font-italic">  {{posts[idxModal].like ? posts[idxModal].like.length : 0}}</span>
+            </span>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <span style="color: #489cff" (click)="update(idxModal, 'unlike')"><fa-icon
+                    [icon]="['fas', 'thumbs-down']"></fa-icon>
+              <span class="font-italic">  {{posts[idxModal].unlike ? posts[idxModal].unlike.length : 0}}</span>
+            </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5 mx-auto" [hidden]="!showFeedback">
+            <div class="modal-body">
+              <!-- Project Details Go Here -->
+              <h3 class="text-uppercase text-danger">Feedback</h3>
+              <pre>Updated Date : {{posts[idxModal].feedback ? (posts[idxModal].feedback.date | date: 'yyyy-MM-dd') : "No Date"}}</pre>
+              <p>{{posts[idxModal].feedback ? posts[idxModal].feedback.content : "No Feedback"}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="container-fluid">
+          <h5 class="text-left"><em>Comments</em></h5><br/>
+          <ng-container *ngIf="posts[idxModal].comments">
+            <div class="list-group text-left" *ngFor="let comment of posts[idxModal].comments">
+              <div class="list-group-item">
+                <h4 class="list-group-item-heading" style="font-size: 1.1rem;">{{comment.content}}</h4>
+                <p class="list-group-item-text text-muted"
+                   style="font-size: 0.9rem;">{{comment.date | date:'yyyy-MM-dd'}}</p>
+              </div>
+            </div>
+          </ng-container>
+          <form [formGroup]="commentForm">
+              <textarea formControlName="content" name="content" id="content" placeholder="댓글을 작성해주세요" cols="40"
+                        rows="4"
+                        class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && form.content.errors }"></textarea>
+
+          </form>
+          <button type="button" class="btn btn-outline-success" (click)="onSubmit()">Write</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<section id="hot">
+  <div class="container">
+    <div class="text-center">
+      <h2 class="section-heading text-uppercase" style="color: white">Hot Topic</h2>
+      <h3 class="section-subheading text-muted" style="font-size: 22px;">Most Liked Posts</h3>
+    </div>
+    <div class="container">
+      <ng-container *ngFor="let idx of [0,1,2,3]">
+        <div class="card m-1 ml-auto mr-auto text-center" *ngIf="sortedPosts[idx]">
+          <div class="card-title" style="color: red;">
+            <fa-icon [icon]="['fas', 'fist-raised']"></fa-icon>
+            <span style="font-size: 20px;">&nbsp;&nbsp;{{sortedPosts[idx].category}}</span>
+          </div>
+          <h4 style="align-content: center" class="text-truncate">{{sortedPosts[idx].title}}</h4>
+          <p class="card-text text-truncate">{{sortedPosts[idx].content}}</p>
+          <div class="card-block">
+            <h5 class="text-left">
+            <span style="color: red" class="f-left"><fa-icon [icon]="['fas', 'heart']"></fa-icon>
+              <span class="font-italic">  {{sortedPosts[idx].like ? sortedPosts[idx].like.length : 0}}</span>
+            </span>
+              <span style="color: #489cff" class="f-right"><fa-icon [icon]="['fas', 'thumbs-down']"></fa-icon>
+              <span class="font-italic">  {{sortedPosts[idx].unlike ? sortedPosts[idx].unlike.length : 0}}</span>
+            </span>
+            </h5>
+          </div>
+          <div class="card-footer container-fluid">
+            <fa-icon [icon]="['far', 'clock']"></fa-icon>
+            <span>{{getWeekAgo(sortedPosts[idx].expired) | date: 'yyyy.MM.dd'}}
+              ~ {{sortedPosts[idx].expired | date: 'yyyy.MM.dd'}}</span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</section>
+
+
+<section id="post" class="justify-content-center">
+  <div class="text-center">
+    <h2 class="section-heading text-uppercase" style="color: white">Post</h2>
+    <h3 class="section-subheading text-muted" style="font-size: 22px;">Show All Posts</h3>
+  </div>
+  <swiper *ngIf="posts" fxFlex="auto" class="container" [config]="swipeConfig" (indexChange)="onIndexChange($event)"
+          (swiperTransitionStart)="onSwiperEvent('transitionStart')"
+          (swiperTransitionEnd)="onSwiperEvent('transitionEnd')">
+    <ng-container *ngFor="let base of indices;">
+      <div class="swiper-slide">
+        <div fxLayout="column" fxLayoutAlign="center center" fxFlexFill>
+          <ng-container *ngFor="let idx of [base, base+1]">
+            <div class="card m-1" *ngIf="posts[idx] && !isExpired(posts[idx].expired)"
+                 (click)="clickPost(idx, cardmodal)">
+              <div class="card-title" style="color: red;">
+                <fa-icon [icon]="['fas', 'fist-raised']"></fa-icon>
+                <span style="font-size: 20px;">&nbsp;&nbsp;{{posts[idx].category}}</span>
+              </div>
+              <h3 class="text-truncate" style align="center">{{posts[idx].title}}</h3>
+              <p class="card-text text-truncate">{{posts[idx].content}}</p>
+              <div class="card-block">
+                <h5 class="text-left">
+            <span style="color: red" class="f-left"><fa-icon [icon]="['fas', 'heart']"></fa-icon>
+              <span class="font-italic">  {{posts[idx].like ? posts[idx].like.length : 0}}</span>
+            </span>
+                  <span style="color: #489cff" class="f-right"><fa-icon [icon]="['fas', 'thumbs-down']"></fa-icon>
+              <span class="font-italic">  {{posts[idx].unlike ? posts[idx].unlike.length : 0}}</span>
+            </span>
+                </h5>
+              </div>
+              <div class="card-footer container-fluid">
+                <fa-icon [icon]="['far', 'clock']"></fa-icon>
+                <span>{{getWeekAgo(posts[idx].expired) | date: 'yyyy.MM.dd'}}
+                  ~ {{posts[idx].expired | date: 'yyyy.MM.dd'}}</span>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+  </swiper>
+</section>
+
+<!--<ngb-carousel class="multi-item-carousel" *ngIf="posts">-->
+<!--<ng-container *ngFor="let post of posts">-->
+<!--<ng-template ngbSlide>-->
+<!--<div class="col-md-4">-->
+<!--<div class="card m-1" *ngIf="post && !isExpired(post.expired)"-->
+<!--(click)="clickPost(idx, cardmodal)">-->
+<!--<img class="card-img-top img-fluid"-->
+<!--src="data:image/jpeg;base64,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"-->
+<!--alt="Card image cap">-->
+<!--<div class="card-body">-->
+<!--<div class="card-title">-->
+<!--<fa-icon [icon]="['far', 'clock']"></fa-icon>-->
+<!--<span style="color: #0054FF">{{getWeekAgo(post.expired) | date: 'yyyy.MM.dd'}}-->
+<!--~ {{post.expired | date: 'yyyy.MM.dd'}}</span>-->
+<!--<h4 class="text-danger">{{post.title}}</h4>-->
+<!--<p class="card-text">{{post.content}}</p>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="card-footer">-->
+<!--<div class="row">-->
+<!--<div class="col-6">-->
+<!--<span style="color: red"> <fa-icon [icon]="['fas', 'heart']"></fa-icon></span><span-->
+<!--class="font-italic">&nbsp;&nbsp;&nbsp;3213</span>-->
+<!--</div>-->
+<!--<div class="col-6">-->
+<!--<span style="color: #489CFF;"><fa-icon [icon]="['fas', 'thumbs-down']"></fa-icon></span>-->
+<!--<span class="font-italic">&nbsp;&nbsp;&nbsp;232</span>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="row justify-content-center">-->
+<!--<ng-container *ngFor="let idx of [base, base+1, base+2]">-->
+<!--<div class="card col-2 m-1" *ngIf="posts[idx] && !isExpired(posts[idx].expired)"-->
+<!--(click)="clickPost(idx, cardmodal)">-->
+<!--<img class="card-img-top img-fluid"-->
+<!--src="data:image/jpeg;base64,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"-->
+<!--alt="Card image cap">-->
+<!--<div class="card-body">-->
+<!--<div class="card-title">-->
+<!--<fa-icon [icon]="['far', 'clock']"></fa-icon>-->
+<!--<span style="color: #0054FF">{{getWeekAgo(posts[idx].expired) | date: 'yyyy.MM.dd'}}-->
+<!--~ {{posts[idx].expired | date: 'yyyy.MM.dd'}}</span>-->
+<!--<h4 class="text-danger">{{posts[idx].title}}</h4>-->
+<!--<p class="card-text">{{posts[idx].content}}</p>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="card-footer">-->
+<!--<div class="row">-->
+<!--<div class="col-6">-->
+<!--<span style="color: red"> <fa-icon [icon]="['fas', 'heart']"></fa-icon></span><span-->
+<!--class="font-italic">&nbsp;&nbsp;&nbsp;3213</span>-->
+<!--</div>-->
+<!--<div class="col-6">-->
+<!--<span style="color: #489CFF;"><fa-icon [icon]="['fas', 'thumbs-down']"></fa-icon></span>-->
+<!--<span class="font-italic">&nbsp;&nbsp;&nbsp;232</span>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</ng-container>-->
+<!--</div>-->
+
+<!--<div class="row justify-content-center">-->
+<!--<ng-container *ngFor="let idx of [base+3, base+4, base+5]">-->
+<!--<div class="card m-1" style="width: 17em" *ngIf="posts[idx] && !isExpired(posts[idx].expired)"-->
+<!--(click)="clickPost(idx, cardmodal)">-->
+<!--<img class="card-img-top img-fluid"-->
+<!--src="data:image/jpeg;base64,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"-->
+<!--alt="Card image cap">-->
+<!--<div class="card-body">-->
+<!--<div class="card-title">-->
+<!--<fa-icon [icon]="['far', 'clock']"></fa-icon>-->
+<!--<span style="color: #0054FF">{{getWeekAgo(posts[idx].expired) | date: 'yyyy.MM.dd'}}-->
+<!--~ {{posts[idx].expired | date: 'yyyy.MM.dd'}}</span>-->
+<!--<h4 class="text-danger">{{posts[idx].title}}</h4>-->
+<!--<p class="card-text">{{posts[idx].content}}</p>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="card-footer">-->
+<!--<div class="row">-->
+<!--<div class="col-6">-->
+<!--<span style="color: red"> <fa-icon [icon]="['fas', 'heart']"></fa-icon></span><span-->
+<!--class="font-italic">&nbsp;&nbsp;&nbsp;3213</span>-->
+<!--</div>-->
+<!--<div class="col-6">-->
+<!--<span style="color: #489CFF;"><fa-icon [icon]="['fas', 'thumbs-down']"></fa-icon></span>-->
+<!--<span class="font-italic">&nbsp;&nbsp;&nbsp;232</span>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</ng-container>-->
+<!--</div>-->
+<!--</ng-template>-->
+<!--</ng-container>-->
+<!--</ngb-carousel>-->

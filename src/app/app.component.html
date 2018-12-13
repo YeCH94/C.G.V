@@ -1,20 +1,170 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<!-- Navbar Component -->
+<div class="fixed-top">
+  <app-navbar></app-navbar>
+  <ngb-alert class="text-center" *ngIf="alertMessage" type="{{alertType}}" (close)="alertMessage = null">
+    {{alertMessage}}
+  </ngb-alert>
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
 
+<div>
+  <header class="masthead" id="top">
+    <div class="container">
+      <div class="intro-text">
+        <div class="intro-lead-in">Welcome To Our Page!</div>
+        <div class="intro-heading text-uppercase">Let's make a better
+          Gachon university
+        </div>
+        <a class="btn btn-primary btn-xl text-uppercase"
+           href="#about">Tell Me More</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Card Content -->
+  <section>
+    <app-cards (alertDisplay)="displayAlert('signin')"></app-cards>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="container">
+      <div class="card col-8 ml-auto mr-auto">
+      <div class="row">
+        <div class="col-lg-12 text-center">
+          <h2 class="section-heading text-uppercase">About</h2>
+          <h3 class="section-subheading text-muted" style="font-size: 22px;">Crowd Gachon Voting</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <ul class="timeline">
+            <li>
+              <div class="timeline-image">
+                <img class="rounded-circle img-fluid" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-nUAa5YsnMbfoc9ht0A0w7oJVEFNoYe-uBmDHg8Jol0hveK6Btw"
+                     alt="">
+              </div>
+              <div class="timeline-panel">
+                <div class="timeline-heading">
+                  <h4>Communication</h4>
+                  <h4 class="subheading">It's hard to communicate</h4>
+                </div>
+                <div class="timeline-body">
+                  <p class="text-muted">Gachon university has a "가천 옴부즈" for communication
+                    between school and students. But most of students do not use this path, even
+                    don't know. we have created this program to eliminate this inconvenience of communication.
+                  </p>
+                </div>
+              </div>
+            </li>
+            <li class="timeline-inverted">
+              <div class="timeline-image">
+                <img class="rounded-circle img-fluid" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0prF3fgy9LRTuok21SYNgVCY0g9X7MFUkL1KucCloFmNewkes"
+                     alt="">
+              </div>
+              <div class="timeline-panel">
+                <div class="timeline-heading">
+                  <h4>Voting</h4>
+                  <h4 class="subheading">Our program has an objectivity</h4>
+                </div>
+                <div class="timeline-body">
+                  <p class="text-muted">
+                    By bringing like/unlike system in, our program has an objectivity. And
+                    we make an criteria for getting a feedback or for deleting a rude or personal
+                    idea.
+                  </p>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="timeline-image">
+                <img class="rounded-circle img-fluid" src="https://sound-marketing.com/wp-content/uploads/2016/08/we-want-your-feedback-bullhorn-illustration.jpg"
+                     alt="">
+              </div>
+              <div class="timeline-panel">
+                <div class="timeline-heading">
+                  <h4>Feedback</h4>
+                  <h4 class="subheading">Lots of people think a same thing!</h4>
+                </div>
+                <div class="timeline-body">
+                  <p class="text-muted">
+                    Everyone thinks differently. So, can not satisfy the wish for each.
+                    But using criteria, at least, It's not grumble or flatter, but worthy of consideration.
+                    The school should make their position for voting gotten more than 5,000 likes.
+                  </p>
+                </div>
+              </div>
+            </li>
+            <li class="timeline-inverted">
+              <div class="timeline-image">
+                <h4 class="text-center">
+                  <a href="#page-top" style="color: white; text-decoration: none;">Do <br>Petition <br>now!</a>
+                </h4>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="team">
+    <div class="container">
+      <div class="card col-8 ml-auto mr-auto">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <h2 class="section-heading text-uppercase">Our Amazing Team</h2>
+            <h3 class="section-subheading text-muted">We create a masterpiece</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="team-member">
+              <img class="mx-auto rounded-circle" src="../assets/img/team1.png" alt="">
+              <h4>Kangwoo Nam</h4>
+              <p class="text-muted">Publisher</p>
+              <ul class="list-inline social-buttons">
+                <li class="list-inline-item"><a href="#"><fa-icon [icon]="['fab', 'twitter']"></fa-icon>
+                </a></li>
+                <li class="list-inline-item"><a href="#"><fa-icon [icon]="['fab', 'facebook']"></fa-icon>
+                </a></li>
+                <li class="list-inline-item"><a href="#"><fa-icon [icon]="['fab', 'linkedin']"></fa-icon>
+                </a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="team-member">
+              <img class="mx-auto rounded-circle" src="../assets/img/team2.png" alt="">
+              <h4>Chanho Ye</h4>
+              <p class="text-muted">Developer</p>
+              <ul class="list-inline social-buttons">
+                <li class="list-inline-item"><a href="#"><fa-icon [icon]="['fab', 'twitter']"></fa-icon>
+                </a></li>
+                <li class="list-inline-item"><a href="#"><fa-icon [icon]="['fab', 'facebook']"></fa-icon>
+                </a></li>
+                <li class="list-inline-item"><a href="#"><fa-icon [icon]="['fab', 'linkedin']"></fa-icon>
+                </a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="team-member">
+              <img class="mx-auto rounded-circle" src="../assets/img/team3.png" alt="">
+              <h4>Donghwan An</h4>
+              <p class="text-muted">Designer</p>
+              <ul class="list-inline social-buttons">
+                <li class="list-inline-item"><a href="#"><fa-icon [icon]="['fab', 'twitter']"></fa-icon>
+                </a></li>
+                <li class="list-inline-item"><a href="#"><fa-icon [icon]="['fab', 'facebook']"></fa-icon>
+                </a></li>
+                <li class="list-inline-item"><a href="#"><fa-icon [icon]="['fab', 'linkedin']"></fa-icon>
+                </a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

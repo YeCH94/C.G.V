@@ -1,0 +1,135 @@
+<!-- Sign Modal -->
+<ng-template #SignModal let-signModal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{modalTitle}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="signModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <ng-container *ngIf="modalType === 'in'">
+    <div class="modal-body">
+      <button class="btn btn-outline-primary btn-lg" (click)="signModal.close('GoogleSignIn')">
+        <span><i class="icon-google"></i></span>
+        Sign In With Google
+      </button>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="modalType === 'out'">
+    <div class="modal-body">
+      <p>로그아웃 하시겠습니까?</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-success" (click)="signModal.close('SignOut')">Confirm</button>
+      <button type="button" class="btn btn-outline-warning" (click)="signModal.close('Cancel click')">Cancel</button>
+    </div>
+  </ng-container>
+</ng-template>
+
+<!-- Write Modal -->
+<ng-template #FormModal let-formModal>
+  <div class="modal-header">
+    <h4 class="modal-title">청원 작성</h4>
+    <button type="button" class="close" aria-label="Close" (click)="formModal.dismiss('Cross click'); resetForm()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form [formGroup]="inputForm">
+    <div class="modal-body">
+      <div class="media">
+        <div class="media-body">
+          <div class="mb-1">
+            <div class="btn-group btn-group-toggle" ngbRadioGroup formControlName="category">
+              <h6 class="mr-2">Category</h6>
+              <label ngbButtonLabel class="btn-outline-info">
+                <input ngbButton type="radio" value="Policy">Policy
+              </label>
+              <label ngbButtonLabel class="btn-outline-info">
+                <input ngbButton type="radio" value="Facility">Facility
+              </label>
+              <label ngbButtonLabel class="btn-outline-info">
+                <input ngbButton type="radio" value="Service">Service
+              </label>
+              <label ngbButtonLabel class="btn-outline-info">
+                <input ngbButton type="radio" value="Etc">Etc
+              </label>
+            </div>
+          </div>
+          <div class="mb-1">
+            <input type="text" name="title" formControlName="title" placeholder="Title"
+                   class="pull-right form-control"
+                   [ngClass]="{ 'is-invalid': submitted && form.title.errors }"/>
+            <div *ngIf="submitted && form.title.errors" class="invalid-feedback">
+              <div *ngIf="form.title.errors.required" class="pull-right">제목을 입력해주세요</div>
+            </div>
+          </div>
+          <div class="mb-1">
+            <textarea name="content" formControlName="content" placeholder="Content" cols="40" rows="14"
+                      class="pull-right form-control"
+                      [ngClass]="{ 'is-invalid': submitted && form.content.errors }"></textarea>
+            <div *ngIf="submitted && form.content.errors" class="invalid-feedback">
+              <div *ngIf="form.content.errors.required" class="pull-right">내용을 입력해주세요</div>
+            </div>
+          </div>
+          <ul class="list-inline">
+            <li>Period: {{today | date: 'yyyy.MM.dd'}} ~ {{getWeekAfter() | date: 'yyyy.MM.dd'}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-success" (click)="onSubmit(formModal)">Confirm</button>
+      <button type="button" class="btn btn-outline-warning" (click)="formModal.close('Cancel click'); resetForm()">
+        Cancel
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark" id="mainNav" [class.navbar-shrink]="navShrink">
+  <div class="container">
+    <a class="navbar-brand" href="#">Crowd Gachon Voting</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button"
+            data-toggle="collapse"
+            aria-controls="navbarResponsive"
+            aria-label="Toggle navigation" (click)="toggleCollapse()" [attr.aria-expanded]="!isCollapsed">
+      Menu
+      <fa-icon [icon]="['fas', 'bars']"></fa-icon>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive" [ngbCollapse]="isCollapsed">
+      <ul class="navbar-nav text-uppercase ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#top" (click)="triggerScrollTo('top')">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#hot" (click)="triggerScrollTo('hot')">Hot Topic</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#post" (click)="triggerScrollTo('post')">Post</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#about" (click)="triggerScrollTo('about')">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#team" (click)="triggerScrollTo('team')">Team</a>
+        </li>
+        <ng-container *ngIf="!authService.isLoggedIn()">
+          <li class="nav-item">
+            <a class="nav-link" (click)="openModal(SignModal, 'in')">Sign In</a>
+          </li>
+        </ng-container>
+        <ng-container *ngIf="authService.isLoggedIn()">
+          <li class="nav-item">
+            <a class="nav-link" (click)="openFormModal(FormModal)">Write Post</a>
+          </li>
+          <!--<li class="nav-item">
+            <a class="nav-link">Manage Post</a>
+          </li>-->
+          <li class="nav-item">
+            <a class="nav-link" (click)="openModal(SignModal, 'out')">Sign Out</a>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</nav>
