@@ -40,11 +40,12 @@ export class CardsComponent implements OnInit, OnDestroy {
   submitted = false;
   showFeedback = false;
   postToEdit: Post;
+  clicked: Post;
   postSub: Subscription;
   idxModal: number;
   today = new Date();
   commentForm: FormGroup;
-  comment: Comment;
+  updatedComm: Comment;
   likeModel = {
     like: false,
     unlike: false
@@ -96,15 +97,15 @@ export class CardsComponent implements OnInit, OnDestroy {
     return this.commentForm.controls;
   }
 
-  update(idx, like) {
+  updateLike(data: Post, like) {
     if (like === 'like') {
-      const array = this.posts[idx].like;
+      const array = this.clicked.like;
       array.push(this.authService.getUid());
-      this.dbService.updatePost(this.posts[idx].key, {like: array});
+      this.dbService.updatePost(this.clicked.key, {like: array});
     } else {
-      const array = this.posts[idx].unlike;
+      const array = this.clicked.unlike;
       array.push(this.authService.getUid());
-      this.dbService.updatePost(this.posts[idx].key, {unlike: array});
+      this.dbService.updatePost(this.clicked.key, {unlike: array});
     }
   }
 
@@ -113,11 +114,12 @@ export class CardsComponent implements OnInit, OnDestroy {
     this.postSub.unsubscribe();
   }
 
-  clickPost(index, cardmodal) {
+  clickPost(post: Post, cardmodal) {
     if (!this.isLoggedIn) {
       this.alertDisplay.emit();
     } else {
-      this.idxModal = index;
+      console.log(post.category);
+      this.clicked = post;
       this.modalService.open(cardmodal, {centered: true, size: 'lg'});
     }
   }
@@ -143,16 +145,16 @@ export class CardsComponent implements OnInit, OnDestroy {
   }
 
   addComment() {
-    this.comment = {
+    this.updatedComm = {
       uid: this.authService.getUid(),
       content: this.commentForm.value['content'],
       date: new Date().getTime()
     };
-    const comments = this.posts[this.idxModal].comments ? this.posts[this.idxModal].comments : [];
+    const comments = this.clicked.comments ? this.clicked.comments : [];
 
-    comments.push(this.comment);
+    comments.push(this.updatedComm);
 
-    this.dbService.updatePost(this.posts[this.idxModal].key, {comments: comments});
+    this.dbService.updatePost(this.clicked.key, {comments: comments});
   }
 
   getWeekAgo(expired) {

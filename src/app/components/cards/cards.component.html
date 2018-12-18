@@ -13,31 +13,31 @@
             <div class="col-lg-7 mx-auto">
               <div class="modal-body">
                 <h3 class="text-uppercase">Petition</h3>
-                <p class="item-intro text-muted">{{posts[idxModal].title}}
-                <p>{{posts[idxModal].content}}</p>
+                <p class="item-intro text-muted">{{clicked.title}}
+                <p>{{clicked.content}}</p>
                 <ul class="list-inline">
-                  <li><em>Period&nbsp; {{getWeekAgo(posts[idxModal].expired) | date: 'yyyy.MM.dd'}}
-                    ~ {{posts[idxModal].expired | date: 'yyyy.MM.dd'}}</em></li>
+                  <li><em>Period&nbsp; {{getWeekAgo(clicked.expired) | date: 'yyyy.MM.dd'}}
+                    ~ {{clicked.expired | date: 'yyyy.MM.dd'}}</em></li>
                 </ul>
-                <ng-container *ngIf="posts[idxModal].feedback && showFeedback">
+                <ng-container *ngIf="clicked.feedback && showFeedback">
                   <button class="btn btn-primary" type="button" (click)="showFeedback = false">
                     <fa-icon [icon]="['fas', 'times']"></fa-icon>
                     Feedback Close
                   </button>
                 </ng-container>
-                <ng-container *ngIf="posts[idxModal].feedback && !showFeedback">
+                <ng-container *ngIf="clicked.feedback && !showFeedback">
                   <button class="btn btn-danger" type="button" (click)="showFeedback = true">Feedback</button>
                 </ng-container>
                 <br/>
                 <div class="row justify-content-center">
-                <span style="color: red" (click)="update(idxModal, 'like')"><fa-icon
+                <span style="color: red" (click)="updateLike(clicked, 'like')"><fa-icon
                   [icon]="['fas', 'heart']"></fa-icon>
-              <span class="font-italic">  {{posts[idxModal].like ? posts[idxModal].like.length : 0}}</span>
+              <span class="font-italic">  {{clicked.like ? clicked.like.length : 0}}</span>
             </span>
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <span style="color: #489cff" (click)="update(idxModal, 'unlike')"><fa-icon
+                  <span style="color: #489cff" (click)="updateLike(clicked, 'unlike')"><fa-icon
                     [icon]="['fas', 'thumbs-down']"></fa-icon>
-              <span class="font-italic">  {{posts[idxModal].unlike ? posts[idxModal].unlike.length : 0}}</span>
+              <span class="font-italic">  {{clicked.unlike ? clicked.unlike.length : 0}}</span>
             </span>
                 </div>
               </div>
@@ -47,20 +47,22 @@
             <div class="modal-body">
               <!-- Project Details Go Here -->
               <h3 class="text-uppercase text-danger">Feedback</h3>
-              <pre>Updated Date : {{posts[idxModal].feedback ? (posts[idxModal].feedback.date | date: 'yyyy-MM-dd') : "No Date"}}</pre>
-              <p>{{posts[idxModal].feedback ? posts[idxModal].feedback.content : "No Feedback"}}</p>
+              <pre>Updated Date : {{clicked.feedback ? (clicked.feedback.date | date: 'yyyy-MM-dd') : "No Date"}}</pre>
+              <p>{{clicked.feedback ? clicked.feedback.content : "No Feedback"}}</p>
             </div>
           </div>
         </div>
         <div class="container-fluid">
           <h5 class="text-left"><em>Comments</em></h5><br/>
-          <ng-container *ngIf="posts[idxModal].comments">
-            <div class="list-group text-left" *ngFor="let comment of posts[idxModal].comments">
-              <div class="list-group-item">
-                <h4 class="list-group-item-heading" style="font-size: 1.1rem;">{{comment.content}}</h4>
-                <p class="list-group-item-text text-muted"
-                   style="font-size: 0.9rem;">{{comment.date | date:'yyyy-MM-dd'}}</p>
-              </div>
+          <ng-container *ngIf="clicked.comments">
+            <div class="list-group text-left">
+              <ng-container *ngFor="let comment of clicked.comments">
+                <div class="list-group-item">
+                  <h4 class="list-group-item-heading" style="font-size: 1.1rem;">{{comment.content}}</h4>
+                  <p class="list-group-item-text text-muted"
+                     style="font-size: 0.9rem;">{{comment.date | date:'yyyy-MM-dd'}}</p>
+                </div>
+              </ng-container>
             </div>
           </ng-container>
           <form [formGroup]="commentForm">
@@ -68,9 +70,9 @@
                         rows="4"
                         class="form-control"
                         [ngClass]="{ 'is-invalid': submitted && form.content.errors }"></textarea>
-
+            <button type="button" class="btn btn-outline-success" (click)="onSubmit()">Write</button>
           </form>
-          <button type="button" class="btn btn-outline-success" (click)="onSubmit()">Write</button>
+
         </div>
       </div>
     </div>
@@ -85,29 +87,31 @@
     </div>
     <div class="container">
       <ng-container *ngFor="let idx of [0,1,2,3]">
-        <div class="card m-1 ml-auto mr-auto text-center" *ngIf="sortedPosts[idx]">
-          <div class="card-title" style="color: red;">
-            <fa-icon [icon]="['fas', 'fist-raised']"></fa-icon>
-            <span style="font-size: 20px;">&nbsp;&nbsp;{{sortedPosts[idx].category}}</span>
-          </div>
-          <h4 style="align-content: center" class="text-truncate">{{sortedPosts[idx].title}}</h4>
-          <p class="card-text text-truncate">{{sortedPosts[idx].content}}</p>
-          <div class="card-block">
-            <h5 class="text-left">
+        <ng-container *ngIf="sortedPosts[idx]">
+          <div class="card m-1 ml-auto mr-auto text-center" (click)="clickPost(sortedPosts[idx], cardmodal)">
+            <div class="card-title" style="color: red;">
+              <fa-icon [icon]="['fas', 'fist-raised']"></fa-icon>
+              <span style="font-size: 20px;">&nbsp;&nbsp;{{sortedPosts[idx].category}}</span>
+            </div>
+            <h4 style="align-content: center" class="text-truncate">{{sortedPosts[idx].title}}</h4>
+            <p class="card-text text-truncate">{{sortedPosts[idx].content}}</p>
+            <div class="card-block">
+              <h5 class="text-left">
             <span style="color: red" class="f-left"><fa-icon [icon]="['fas', 'heart']"></fa-icon>
               <span class="font-italic">  {{sortedPosts[idx].like ? sortedPosts[idx].like.length : 0}}</span>
             </span>
-              <span style="color: #489cff" class="f-right"><fa-icon [icon]="['fas', 'thumbs-down']"></fa-icon>
+                <span style="color: #489cff" class="f-right"><fa-icon [icon]="['fas', 'thumbs-down']"></fa-icon>
               <span class="font-italic">  {{sortedPosts[idx].unlike ? sortedPosts[idx].unlike.length : 0}}</span>
             </span>
-            </h5>
+              </h5>
+            </div>
+            <div class="card-footer container-fluid">
+              <fa-icon [icon]="['far', 'clock']"></fa-icon>
+              <span>{{getWeekAgo(sortedPosts[idx].expired) | date: 'yyyy.MM.dd'}}
+                ~ {{sortedPosts[idx].expired | date: 'yyyy.MM.dd'}}</span>
+            </div>
           </div>
-          <div class="card-footer container-fluid">
-            <fa-icon [icon]="['far', 'clock']"></fa-icon>
-            <span>{{getWeekAgo(sortedPosts[idx].expired) | date: 'yyyy.MM.dd'}}
-              ~ {{sortedPosts[idx].expired | date: 'yyyy.MM.dd'}}</span>
-          </div>
-        </div>
+        </ng-container>
       </ng-container>
     </div>
   </div>
@@ -127,7 +131,7 @@
         <div fxLayout="column" fxLayoutAlign="center center" fxFlexFill>
           <ng-container *ngFor="let idx of [base, base+1]">
             <div class="card m-1" *ngIf="posts[idx] && !isExpired(posts[idx].expired)"
-                 (click)="clickPost(idx, cardmodal)">
+                 (click)="clickPost(posts[idx], cardmodal)">
               <div class="card-title" style="color: red;">
                 <fa-icon [icon]="['fas', 'fist-raised']"></fa-icon>
                 <span style="font-size: 20px;">&nbsp;&nbsp;{{posts[idx].category}}</span>
