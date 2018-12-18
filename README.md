@@ -2,6 +2,8 @@
 
 ### Quick Link
 
+[Crowd Gachon Voting](https://crowdgachonvoting.firebaseapp.com/) - Does not support Internet Explorer(Optimized for Chrome)
+
 [Root Component html](https://github.com/YeCH94/C.G.V/blob/master/src/app/app.component.html)
 
 [Card Component html](https://github.com/YeCH94/C.G.V/blob/master/src/app/components/cards/cards.component.html)
